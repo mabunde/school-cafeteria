@@ -3,15 +3,15 @@ package com.example.driftconsultcli.cafeteriaCLI.service;
 import com.example.driftconsultcli.cafeteriaCLI.models.Student;
 import com.example.driftconsultcli.cafeteriaCLI.repository.StudentRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class StudentServiceImpl implements StudentService{
-
-    private  final StudentRepository studentRepository;
+    @Autowired
+    private StudentRepository studentRepository;
 
     @Override
     public List<Student> getAllStudents() {
@@ -25,7 +25,8 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public Student addStudent(Student student) {
-        return null;
+        Student newStudent= studentRepository.save(student);
+        return newStudent;
     }
 
     @Override
