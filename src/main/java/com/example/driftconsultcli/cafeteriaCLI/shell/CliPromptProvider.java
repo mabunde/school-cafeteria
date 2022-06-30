@@ -1,4 +1,4 @@
-package com.example.driftconsultcli.cafeteriaCLI;
+package com.example.driftconsultcli.cafeteriaCLI.shell;
 
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
