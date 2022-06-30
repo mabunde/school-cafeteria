@@ -1,6 +1,8 @@
 package com.example.driftconsultcli.cafeteriaCLI.config;
 
+import com.example.driftconsultcli.cafeteriaCLI.shell.InputReader;
 import com.example.driftconsultcli.cafeteriaCLI.shell.ShellHelper;
+import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,5 +13,9 @@ public class SpringShellConfig {
     @Bean
     public ShellHelper shellHelper(@Lazy Terminal terminal) {
         return new ShellHelper(terminal);
+    }
+    @Bean
+    public InputReader inputReader(@Lazy LineReader lineReader) {
+        return new InputReader(lineReader);
     }
 }

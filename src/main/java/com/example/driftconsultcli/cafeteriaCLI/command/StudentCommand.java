@@ -8,4 +8,7 @@ import org.springframework.shell.standard.ShellComponent;
 @AllArgsConstructor
 public class StudentCommand {
     private final ShellHelper shellHelper;
+
+
+
 }
