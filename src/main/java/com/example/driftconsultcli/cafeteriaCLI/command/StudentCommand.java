@@ -5,14 +5,19 @@ import com.example.driftconsultcli.cafeteriaCLI.models.Student;
 import com.example.driftconsultcli.cafeteriaCLI.service.StudentService;
 import com.example.driftconsultcli.cafeteriaCLI.shell.InputReader;
 import com.example.driftconsultcli.cafeteriaCLI.shell.ShellHelper;
+import com.example.driftconsultcli.cafeteriaCLI.table.BeanTableModelBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.table.*;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @ShellComponent
@@ -23,6 +28,8 @@ public class StudentCommand {
     private  InputReader inputReader;
     @Autowired
     private  StudentService studentService;
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @ShellMethod("Create new student with supplied username")
@@ -74,4 +81,53 @@ public class StudentCommand {
         Student createdStudent = studentService.addStudent(student);
         shellHelper.printSuccess("Created student with id=" + createdStudent.getId());
     }
+
+    @ShellMethod("Display list of students")
+    public void listStudents() {
+        List<Student> students = studentService.getAllStudents();
+
+        LinkedHashMap<String, Object> headers = new LinkedHashMap<>();
+        headers.put("id", "Id");
+        headers.put("username", "Username");
+        headers.put("firstName", "first name");
+        headers.put("lastName", "last name");
+        headers.put("gender", "Gender");
+        TableModel model = new BeanListTableModel<>(students, headers);
+
+        TableBuilder tableBuilder = new TableBuilder(model);
+        tableBuilder.addInnerBorder(BorderStyle.fancy_light);
+        tableBuilder.addHeaderBorder(BorderStyle.fancy_double);
+        shellHelper.print(tableBuilder.build().render(80));
+    }
+    @ShellMethod("Display student's meal card with supplied username")
+    public void mealcard(@ShellOption({"-U", "--username"}) String username) {
+        Student student = studentService.findByUsername(username);
+        if (student == null) {
+            shellHelper.printWarning("No student with the supplied username could be found?!");
+            return;
+        }
+        displaystudent(student);
+    }
+
+    private void displaystudent(Student student) {
+        LinkedHashMap<String, Object> labels = new LinkedHashMap<>();
+        labels.put("id", "Id");
+        labels.put("username", "username");
+        labels.put("firstName", "first name");
+        labels.put("lastName", "last name");
+        labels.put("gender", "Gender");
+
+        String[] header = new String[] {"Property", "Value"};
+        BeanTableModelBuilder builder = new BeanTableModelBuilder(student, objectMapper);
+        TableModel model = builder.withLabels(labels).withHeader(header).build();
+
+        TableBuilder tableBuilder = new TableBuilder(model);
+
+        tableBuilder.addInnerBorder(BorderStyle.fancy_light);
+        tableBuilder.addHeaderBorder(BorderStyle.fancy_double);
+        tableBuilder.on(CellMatchers.column(0)).addSizer(new AbsoluteWidthSizeConstraints(20));
+        tableBuilder.on(CellMatchers.column(1)).addSizer(new AbsoluteWidthSizeConstraints(30));
+        shellHelper.print(tableBuilder.build().render(80));
+    }
+
 }
