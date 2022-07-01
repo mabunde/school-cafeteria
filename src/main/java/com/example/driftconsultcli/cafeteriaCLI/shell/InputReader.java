@@ -5,10 +5,7 @@ import org.jline.reader.LineReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class InputReader {
@@ -79,6 +76,21 @@ public class InputReader {
         }
         return answer;
     }
+    public String promptWithOptions(String prompt, String defaultValue, List<String> optionsAsList) {
+        String answer;
+        List<String> allowedAnswers = new ArrayList<>(optionsAsList);
+        if (StringUtils.hasText(defaultValue)) {
+            allowedAnswers.add("");
+        }
+        do {
+            answer = lineReader.readLine(String.format("%s %s: ", prompt, formatOptions(defaultValue, optionsAsList)));
+        } while (!allowedAnswers.contains(answer) && !"".equals(answer));
+
+        if (answer.isEmpty() && allowedAnswers.contains("")) {
+            return defaultValue;
+        }
+        return answer;
+    }
     private boolean containsString(Set <String> l, String s, boolean ignoreCase){
         if (!ignoreCase) {
             return l.contains(s);
@@ -89,5 +101,21 @@ public class InputReader {
                 return true;
         }
         return false;
+    }
+    private List<String> formatOptions(String defaultValue, List<String> optionsAsList) {
+        List<String> result = new ArrayList<>();
+        for (String option : optionsAsList) {
+            String val = option;
+            if ("".equals(option) || option == null) {
+                val = "''";
+            }
+            if (defaultValue != null) {
+                if (defaultValue.equals(option) || (defaultValue.equals("") && option == null)) {
+                    val = shellHelper.getInfoMessage(val);
+                }
+            }
+            result.add(val);
+        }
+        return result;
     }
 }

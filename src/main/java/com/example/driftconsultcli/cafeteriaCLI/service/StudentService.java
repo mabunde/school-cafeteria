@@ -11,6 +11,7 @@ public interface StudentService {
     public Student addStudent(Student student);
     public Student findByUsername(String username);
     public Student rechargeCard(String username, double credits);
+    public Student checkBalance(String username);
 
 
 }

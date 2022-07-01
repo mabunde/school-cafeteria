@@ -56,6 +56,12 @@ public class StudentServiceImpl extends Observable  implements StudentService{
         return student;
     }
 
+    @Override
+    public Student checkBalance(String username) {
+        Student student = studentRepository.findByUsername(username);
+        return null;
+    }
+
 
     public Observer getObserver() {
         return observer;

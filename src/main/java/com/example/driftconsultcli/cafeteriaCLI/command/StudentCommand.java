@@ -9,6 +9,7 @@ import com.example.driftconsultcli.cafeteriaCLI.table.BeanTableModelBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -24,7 +25,7 @@ import java.util.Map;
 public class StudentCommand {
     @Autowired
     private  ShellHelper shellHelper;
-    @Autowired
+    @Autowired @Lazy
     private  InputReader inputReader;
     @Autowired
     private  StudentService studentService;
@@ -66,7 +67,8 @@ public class StudentCommand {
         options.put("M", Gender.MALE.name());
         options.put("F", Gender.FEMALE.name() );
         options.put("D", Gender.DIVERSE.name());
-        String genderValue = inputReader.selectFromList("Gender", "Please enter one of the [] values", options, true, null);
+        String genderValue = inputReader.selectFromList("Gender",
+                "Please enter one of the [] values", options, true, null);
         Gender gender = Gender.valueOf(options.get(genderValue.toUpperCase()));
         student.setGender(gender);
 
@@ -140,6 +142,16 @@ public class StudentCommand {
             return;
         }
         studentService.rechargeCard(username,credits);
+    }
+
+    @ShellMethod("check balance of student's card")
+    public void checkBalance(@ShellOption({"-U", "--username"}) String username){
+        Student student = studentService.findByUsername(username);
+        if (student == null) {
+            shellHelper.printWarning("No student with the supplied username could be found?!");
+            return;
+        }
+        studentService.checkBalance(username);
     }
 
 }
