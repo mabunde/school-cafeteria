@@ -43,4 +43,5 @@ public class CafeteriaCommand {
         tableBuilder.on(CellMatchers.column(1)).addSizer(new AbsoluteWidthSizeConstraints(30));
         shellHelper.print(tableBuilder.build().render(80));
     }
+
 }

@@ -117,6 +117,7 @@ public class StudentCommand {
         labels.put("firstName", "first name");
         labels.put("lastName", "last name");
         labels.put("gender", "Gender");
+        labels.put("credit", "Credit");
 
         String[] header = new String[] {"Property", "Value"};
         BeanTableModelBuilder builder = new BeanTableModelBuilder(student, objectMapper);
@@ -131,15 +132,14 @@ public class StudentCommand {
         shellHelper.print(tableBuilder.build().render(80));
     }
     @ShellMethod("Recharge student's card")
-    public void recharge(@ShellOption({"-U", "--username"}) String username) {
+    public void recharge(@ShellOption({"-U", "--username"}) String username,
+    @ShellOption(value={ "-c", "--credits" }) double credits){
         Student student = studentService.findByUsername(username);
         if (student == null) {
             shellHelper.printWarning("No student with the supplied username could be found?!");
             return;
         }
-        return;
-
-
+        studentService.rechargeCard(username,credits);
     }
 
 }
