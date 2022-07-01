@@ -21,6 +21,7 @@ public class Student {
     private String lastName;
 
     private Gender gender;
+    private double credit=1000.00;
 
     public Student(String username, String firstName, String lastName, Gender gender) {
         this.username = username;

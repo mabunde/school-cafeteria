@@ -41,18 +41,18 @@ public class StudentServiceImpl extends Observable  implements StudentService{
     }
 
     @Override
-    public Student findById(Long id) {
-        for (Student student : students) {
-            if (id.equals(student.getId())); {
-                return student;
-            }
-        }
-        return null;
+    public Student findByUsername(String username) {
+        Student student= studentRepository.findByUsername(username);
+        return student;
     }
 
     @Override
-    public Student findByUsername(String username) {
-        Student student= studentRepository.findByUsername(username);
+    public Student rechargeCard(String username, double credits) {
+        Student student = studentRepository.findByUsername(username);
+        double credit = student.getCredit();
+        double newCredit = credit + credits;
+        student.setCredit(newCredit);
+        studentRepository.save(student);
         return student;
     }
 

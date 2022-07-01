@@ -16,9 +16,7 @@ public class Cafeteria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "item_name")
     private String itemName;
-    @Column(name = "item_price")
     private double itemPrice;
 
     public Cafeteria(String itemName, double itemPrice) {

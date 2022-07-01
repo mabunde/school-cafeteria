@@ -33,9 +33,9 @@ public class StudentCommand {
 
 
     @ShellMethod("Create new student with supplied username")
-    public void createUser(@ShellOption({"-U", "--username"}) String username) {
+    public void enrollstudent(@ShellOption({"-U", "--username"}) String username) {
         if (studentService.existsByUsername(username)) {
-            shellHelper.printError(String.format("User with username='%s' already exists --> ABORTING", username));
+            shellHelper.printError(String.format("student with username='%s' already exists --> ABORTING", username));
             return;
         }
         Student student = new Student();
@@ -47,7 +47,7 @@ public class StudentCommand {
             if (StringUtils.hasText(firstName)) {
                 student.setFirstName(firstName);
             } else {
-                shellHelper.printWarning("User's first name CAN NOT be empty string? Please enter valid value!");
+                shellHelper.printWarning("student's first name CAN NOT be empty string? Please enter valid value!");
             }
         } while (student.getFirstName() == null);
 
@@ -61,7 +61,7 @@ public class StudentCommand {
             }
         } while (student.getLastName() == null);
 
-        // 3. read user's Gender ----------------------------------------------
+        // 3. read student's Gender ----------------------------------------------
         Map<String, String> options = new HashMap<>();
         options.put("M", Gender.MALE.name());
         options.put("F", Gender.FEMALE.name() );
@@ -70,7 +70,7 @@ public class StudentCommand {
         Gender gender = Gender.valueOf(options.get(genderValue.toUpperCase()));
         student.setGender(gender);
 
-        // Print user's input -------------------------------------------------
+        // Print student's input -------------------------------------------------
         shellHelper.printInfo("\nCreating new student:");
         shellHelper.print("\nUsername: " + student.getUsername());
         shellHelper.print("Firstname: " + student.getFirstName());
@@ -82,16 +82,17 @@ public class StudentCommand {
         shellHelper.printSuccess("Created student with id=" + createdStudent.getId());
     }
 
-    @ShellMethod("Display list of students")
+    @ShellMethod("Display list of students enrolled")
     public void listStudents() {
         List<Student> students = studentService.getAllStudents();
 
         LinkedHashMap<String, Object> headers = new LinkedHashMap<>();
         headers.put("id", "Id");
         headers.put("username", "Username");
-        headers.put("firstName", "first name");
-        headers.put("lastName", "last name");
+        headers.put("firstName", "First name");
+        headers.put("lastName", "Last name");
         headers.put("gender", "Gender");
+        headers.put("credit", "Credit");
         TableModel model = new BeanListTableModel<>(students, headers);
 
         TableBuilder tableBuilder = new TableBuilder(model);
@@ -128,6 +129,17 @@ public class StudentCommand {
         tableBuilder.on(CellMatchers.column(0)).addSizer(new AbsoluteWidthSizeConstraints(20));
         tableBuilder.on(CellMatchers.column(1)).addSizer(new AbsoluteWidthSizeConstraints(30));
         shellHelper.print(tableBuilder.build().render(80));
+    }
+    @ShellMethod("Recharge student's card")
+    public void recharge(@ShellOption({"-U", "--username"}) String username) {
+        Student student = studentService.findByUsername(username);
+        if (student == null) {
+            shellHelper.printWarning("No student with the supplied username could be found?!");
+            return;
+        }
+        return;
+
+
     }
 
 }
